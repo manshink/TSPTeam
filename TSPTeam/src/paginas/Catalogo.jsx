@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react'
 import { obtenerProductos } from '../servicios/productos'
+import { marcaDe } from '../datos/inventario'
 import TarjetaProducto from '../componentes/TarjetaProducto'
+import FiltrosCatalogo from '../componentes/FiltrosCatalogo'
+
+const filtrosIniciales = {
+  categoria: '',
+  marca: '',
+  precioMin: '',
+  precioMax: '',
+  orden: '',
+}
 
 function Catalogo() {
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState(false)
   const [busqueda, setBusqueda] = useState('')
+  const [filtros, setFiltros] = useState(filtrosIniciales)
 
   useEffect(() => {
     obtenerProductos()
@@ -23,10 +34,38 @@ function Catalogo() {
     return <p className="text-neutral-600">No pudimos cargar el catálogo. Intenta de nuevo más tarde.</p>
   }
 
+  const categorias = [...new Set(productos.map((producto) => producto.category))]
+  const marcas = [...new Set(productos.map((producto) => marcaDe(producto.id)))].sort()
+
   const termino = busqueda.trim().toLowerCase()
-  const productosFiltrados = termino
-    ? productos.filter((producto) => producto.title.toLowerCase().includes(termino))
-    : productos
+  const min = filtros.precioMin === '' ? null : Number(filtros.precioMin)
+  const max = filtros.precioMax === '' ? null : Number(filtros.precioMax)
+
+  let productosFiltrados = productos.filter((producto) => {
+    if (termino && !producto.title.toLowerCase().includes(termino)) return false
+    if (filtros.categoria && producto.category !== filtros.categoria) return false
+    if (filtros.marca && marcaDe(producto.id) !== filtros.marca) return false
+    if (min !== null && producto.price < min) return false
+    if (max !== null && producto.price > max) return false
+    return true
+  })
+
+  if (filtros.orden === 'precio-asc') {
+    productosFiltrados = [...productosFiltrados].sort((a, b) => a.price - b.price)
+  } else if (filtros.orden === 'precio-desc') {
+    productosFiltrados = [...productosFiltrados].sort((a, b) => b.price - a.price)
+  } else if (filtros.orden === 'nombre') {
+    productosFiltrados = [...productosFiltrados].sort((a, b) => a.title.localeCompare(b.title))
+  }
+
+  const cambiarFiltro = (campo, valor) => {
+    setFiltros((actuales) => ({ ...actuales, [campo]: valor }))
+  }
+
+  const limpiar = () => {
+    setBusqueda('')
+    setFiltros(filtrosIniciales)
+  }
 
   return (
     <section>
@@ -43,10 +82,16 @@ function Catalogo() {
         <p className="text-sm text-neutral-500">{productosFiltrados.length} artículos</p>
       </div>
 
+      <FiltrosCatalogo
+        valores={filtros}
+        categorias={categorias}
+        marcas={marcas}
+        alCambiar={cambiarFiltro}
+        alLimpiar={limpiar}
+      />
+
       {productosFiltrados.length === 0 ? (
-        <p className="mt-10 text-neutral-600">
-          No encontramos artículos que coincidan con "{busqueda}".
-        </p>
+        <p className="mt-10 text-neutral-600">No hay artículos que coincidan con tu búsqueda.</p>
       ) : (
         <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
           {productosFiltrados.map((producto) => (
