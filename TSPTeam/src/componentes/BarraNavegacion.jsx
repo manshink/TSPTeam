@@ -1,8 +1,10 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAutenticacion } from '../hooks/useAutenticacion'
+import { useCarrito } from '../hooks/useCarrito'
 
 function BarraNavegacion() {
   const { usuario, haySesion, cerrarSesion } = useAutenticacion()
+  const { cantidadTotal } = useCarrito()
   const navegar = useNavigate()
 
   const estiloEnlace = ({ isActive }) =>
@@ -28,6 +30,11 @@ function BarraNavegacion() {
           </NavLink>
           <NavLink to="/carrito" className={estiloEnlace}>
             Carrito
+            {cantidadTotal > 0 && (
+              <span className="ml-1.5 rounded-full bg-acento-700 px-1.5 py-0.5 text-xs text-white">
+                {cantidadTotal}
+              </span>
+            )}
           </NavLink>
           {haySesion ? (
             <div className="flex items-center gap-4">
