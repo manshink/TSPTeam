@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { obtenerProducto } from '../servicios/productos'
 import { useCarrito } from '../hooks/useCarrito'
+import Cargador from '../componentes/Cargador'
 import { formatearPrecio } from '../lib/formato'
 import { traducirCategoria } from '../datos/categorias'
 import { stockDe, marcaDe } from '../datos/inventario'
@@ -31,7 +32,7 @@ function DetalleProducto() {
   }, [agregado])
 
   if (cargando) {
-    return <p className="text-neutral-500">Cargando...</p>
+    return <Cargador />
   }
 
   if (error || !producto) {

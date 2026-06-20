@@ -3,6 +3,7 @@ import { obtenerProductos } from '../servicios/productos'
 import { marcaDe } from '../datos/inventario'
 import TarjetaProducto from '../componentes/TarjetaProducto'
 import FiltrosCatalogo from '../componentes/FiltrosCatalogo'
+import Cargador from '../componentes/Cargador'
 
 const filtrosIniciales = {
   categoria: '',
@@ -27,7 +28,7 @@ function Catalogo() {
   }, [])
 
   if (cargando) {
-    return <p className="text-neutral-500">Cargando productos...</p>
+    return <Cargador texto="Cargando productos..." />
   }
 
   if (error) {
@@ -91,7 +92,9 @@ function Catalogo() {
       />
 
       {productosFiltrados.length === 0 ? (
-        <p className="mt-10 text-neutral-600">No hay artículos que coincidan con tu búsqueda.</p>
+        <p className="mt-16 text-center text-neutral-600">
+          No hay artículos que coincidan con tu búsqueda.
+        </p>
       ) : (
         <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
           {productosFiltrados.map((producto) => (
