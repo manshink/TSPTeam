@@ -1,4 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react'
+import { stockDe } from '../datos/inventario'
 
 const CLAVE_CARRITO = 'vitrina_carrito'
 
@@ -14,9 +15,10 @@ function reductor(articulos, accion) {
     case 'agregar': {
       const presente = articulos.find((articulo) => articulo.id === accion.articulo.id)
       if (presente) {
+        const tope = stockDe(presente.id)
         return articulos.map((articulo) =>
           articulo.id === accion.articulo.id
-            ? { ...articulo, cantidad: articulo.cantidad + accion.articulo.cantidad }
+            ? { ...articulo, cantidad: Math.min(tope, articulo.cantidad + accion.articulo.cantidad) }
             : articulo,
         )
       }
@@ -25,7 +27,7 @@ function reductor(articulos, accion) {
     case 'cambiarCantidad':
       return articulos.map((articulo) =>
         articulo.id === accion.id
-          ? { ...articulo, cantidad: Math.max(1, accion.cantidad) }
+          ? { ...articulo, cantidad: Math.min(stockDe(articulo.id), Math.max(1, accion.cantidad)) }
           : articulo,
       )
     case 'eliminar':

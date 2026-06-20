@@ -11,9 +11,10 @@ Los productos provienen de Fake Store API.
 - Catálogo con al menos 20 artículos: imagen, nombre, precio, categoría y existencias.
 - Búsqueda por nombre.
 - Filtros por categoría, marca y rango de precio, con ordenamiento.
-- Detalle de cada producto con la descripción ampliada.
-
-El registro e inicio de sesión y el carrito de compras están en desarrollo.
+- Detalle de cada producto con la descripción ampliada (se abre al hacer clic en la imagen).
+- Registro e inicio de sesión de clientes, con la sesión guardada en el navegador.
+- Compra por artículo con selección de cantidad y validación de existencias.
+- Carrito de compras con total a pagar, edición de cantidades y eliminación de productos.
 
 ## Tecnologías
 
@@ -23,6 +24,14 @@ El registro e inicio de sesión y el carrito de compras están en desarrollo.
 - Axios
 - Context API
 - Fake Store API
+
+## Despliegue
+
+La aplicación está desplegada en Vercel: <ENLACE_DEL_DESPLIEGUE>
+
+El código vive dentro de la carpeta `TSPTeam` del repositorio, así que en Vercel el **Root Directory** del
+proyecto se configura como `TSPTeam`. El resto (framework Vite, comando de build y carpeta de salida) lo
+detecta Vercel automáticamente.
 
 ## Ejecutar en local
 
@@ -49,11 +58,13 @@ Otros comandos:
 
 ```
 src/
-  componentes/   barra de navegación, tarjeta de producto, filtros y layout
+  componentes/   barra de navegación, tarjeta de producto, filtros, cargador y layout
   paginas/       inicio, catálogo, detalle, carrito, ingreso y registro
+  contexto/      estado de sesión y de carrito (Context API)
+  hooks/         accesos a los contextos (useAutenticacion, useCarrito)
   servicios/     consumo de Fake Store API
   datos/         existencias, marcas y categorías
-  lib/           utilidades (formato de precio)
+  lib/           utilidades (formato de precio y cálculo de totales)
 ```
 
 ## Equipo

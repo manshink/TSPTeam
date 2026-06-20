@@ -4,6 +4,7 @@ import { useCarrito } from '../hooks/useCarrito'
 import { useAutenticacion } from '../hooks/useAutenticacion'
 import { formatearPrecio } from '../lib/formato'
 import { subtotalArticulo, calcularTotal } from '../lib/calculos'
+import { stockDe } from '../datos/inventario'
 
 function Carrito() {
   const { articulos, cambiarCantidad, eliminar, vaciar } = useCarrito()
@@ -45,7 +46,7 @@ function Carrito() {
 
   const total = calcularTotal(articulos)
   const estiloPaso =
-    'h-8 w-8 rounded-md border border-neutral-300 text-neutral-700 hover:border-neutral-400'
+    'h-8 w-8 rounded-md border border-neutral-300 text-neutral-700 hover:border-neutral-400 disabled:opacity-40'
 
   function finalizar() {
     vaciar()
@@ -85,6 +86,7 @@ function Carrito() {
                   <button
                     type="button"
                     onClick={() => cambiarCantidad(articulo.id, articulo.cantidad - 1)}
+                    disabled={articulo.cantidad <= 1}
                     className={estiloPaso}
                   >
                     -
@@ -93,6 +95,7 @@ function Carrito() {
                   <button
                     type="button"
                     onClick={() => cambiarCantidad(articulo.id, articulo.cantidad + 1)}
+                    disabled={articulo.cantidad >= stockDe(articulo.id)}
                     className={estiloPaso}
                   >
                     +
