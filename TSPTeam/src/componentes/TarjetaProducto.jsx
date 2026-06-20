@@ -1,8 +1,23 @@
 import { Link } from 'react-router-dom'
 import { formatearPrecio } from '../lib/formato'
 import { traducirCategoria } from '../datos/categorias'
+import { stockDe } from '../datos/inventario'
+import { useCarrito } from '../hooks/useCarrito'
 
 function TarjetaProducto({ producto }) {
+  const { agregar } = useCarrito()
+  const agotado = stockDe(producto.id) === 0
+
+  function alAgregar() {
+    agregar({
+      id: producto.id,
+      titulo: producto.title,
+      precio: producto.price,
+      imagen: producto.image,
+      cantidad: 1,
+    })
+  }
+
   return (
     <article className="flex flex-col">
       <Link
@@ -21,6 +36,14 @@ function TarjetaProducto({ producto }) {
           {producto.title}
         </h3>
         <p className="mt-2 font-serif text-lg text-neutral-900">{formatearPrecio(producto.price)}</p>
+        <button
+          type="button"
+          onClick={alAgregar}
+          disabled={agotado}
+          className="mt-3 rounded-md border border-acento-700 px-3 py-1.5 text-sm text-acento-700 hover:bg-acento-50 disabled:border-neutral-300 disabled:text-neutral-400"
+        >
+          {agotado ? 'Agotado' : 'Agregar'}
+        </button>
       </div>
     </article>
   )
